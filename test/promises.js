@@ -1,42 +1,42 @@
 
-var co = require('..');
 var assert = require('assert');
-var Q = require('q');
+
+var co = require('..');
 
 function getPromise(val, err) {
-  return Q.fcall(function(){
-    if (err) throw err;
-    return val;
+  return new Promise(function (resolve, reject) {
+    if (err) reject(err);
+    else resolve(val);
   });
 }
 
-describe('co(fn)', function(){
+describe('co(* -> yield <promise>', function(){
   describe('with one promise yield', function(){
-    it('should work', function(done){
-      co(function *(){
+    it('should work', function(){
+      return co(function *(){
         var a = yield getPromise(1);
-        a.should.equal(1);
-      })(done);
+        assert.equal(1, a);
+      });
     })
   })
 
   describe('with several promise yields', function(){
-    it('should work', function(done){
-      co(function *(){
+    it('should work', function(){
+      return co(function *(){
         var a = yield getPromise(1);
         var b = yield getPromise(2);
         var c = yield getPromise(3);
 
-        [a,b,c].should.eql([1,2,3]);
-      })(done);
+        assert.deepEqual([1, 2, 3], [a, b, c]);
+      });
     })
   })
 
   describe('when a promise is rejected', function(){
-    it('should throw and resume', function(done){
+    it('should throw and resume', function(){
       var error;
 
-      co(function *(){
+      return co(function *(){
         try {
           yield getPromise(1, new Error('boom'));
         } catch (err) {
@@ -46,7 +46,15 @@ describe('co(fn)', function(){
         assert('boom' == error.message);
         var ret = yield getPromise(1);
         assert(1 == ret);
-      })(done);
+      });
     })
+  })
+
+  describe('when yielding a non-standard promise-like', function(){
+    it('should return a real Promise', function() {
+      assert(co(function *(){
+        yield { then: function(){} };
+      }) instanceof Promise);
+    });
   })
 })

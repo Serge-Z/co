@@ -1,7 +1,7 @@
 {
   "name": "co",
-  "version": "3.0.3",
-  "description": "generator async flow control goodness",
+  "version": "4.4.0",
+  "description": "generator async control flow goodness",
   "keywords": [
     "async",
     "flow",
@@ -9,6 +9,7 @@
     "coro",
     "coroutine"
   ],
-  "repo": "visionmedia/co",
-  "scripts": ["index.js"]
+  "repo": "tj/co",
+  "scripts": ["index.js"],
+  "licence": "MIT"
 }
